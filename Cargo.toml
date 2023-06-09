@@ -8,7 +8,7 @@ documentation = "https://docs.rs/ft6236"
 homepage = "https://github.com/andelf/ft6236"
 categories = ["hardware-interfaces", "no-std", "embedded-hal"]
 description = "embedded-hal driver for the FT6236/FT6206/FT6236U touch controller"
-keywords = ["embedded", "embedded-hal", "touch", "touchscreen", "ft6236", "ft6206", "ft6236u"]
+keywords = ["embedded", "touch", "touchscreen", "ft6236", "ft6206"]
 readme = "README.md"
 license = "MIT/Apache-2.0"
 
