@@ -13,6 +13,10 @@ pub mod regs {
     pub const GEST_ID: u8 = 0x01;
 }
 
+const CHIPID_FT6206: u8 = 0x06;
+const CHIPID_FT6236: u8 = 0x36;
+const CHIPID_FT6236U: u8 = 0x64;
+
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 #[repr(u8)]
@@ -105,18 +109,23 @@ where
 
     pub fn init(&mut self, config: Config) -> Result<(), I2C::Error> {
         let chipid = self.read_reg(regs::CHIPID)?;
-        let vendid = self.read_reg(regs::VENDID)?;
 
-        #[cfg(feature = "defmt")]
-        defmt::info!("chipid 0x{:02x}, vendid 0x{:02x}", chipid, vendid);
-
-        if vendid != 0x11 {
-            #[cfg(feature = "defmt")]
-            defmt::error!("invalid vendid");
-        }
-        if chipid != 0x06 && chipid != 0x36 && chipid != 0x64 {
+        if chipid != CHIPID_FT6206 && chipid != CHIPID_FT6236 && chipid != CHIPID_FT6236U {
             #[cfg(feature = "defmt")]
             defmt::error!("invalid chipid");
+        }
+
+        #[cfg(feature = "defmt")]
+        {
+            let vendid = self.read_reg(regs::VENDID)?;
+            let active_report_rate = self.read_reg(0x88)?;
+            let monitor_report_rate = self.read_reg(0x89)?;
+            let g_mode = self.read_reg(0xa4)?;
+
+            defmt::info!("chipid 0x{:02x}, vendid 0x{:02x}", chipid, vendid);
+            defmt::info!("active report rate: 0x{:02x}", active_report_rate);
+            defmt::info!("monitor report rate: 0x{:02x}", monitor_report_rate);
+            defmt::info!("interrupt mode: 0x{:02x}", g_mode);
         }
 
         self.write_reg(regs::THRESHHOLD, config.threshhold)?;
@@ -219,6 +228,6 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Config { threshhold: 0x80 }
+        Config { threshhold: 0x40 }
     }
 }
