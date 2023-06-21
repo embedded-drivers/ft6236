@@ -142,11 +142,11 @@ where
         delay: &mut D,
     ) -> Result<(), P::Error> {
         rst.set_high()?;
-        delay.delay_us(100);
+        delay.delay_ms(5);
         rst.set_low()?;
-        delay.delay_us(100);
+        delay.delay_ms(10); // min = 5ms
         rst.set_high()?;
-        delay.delay_us(100);
+        delay.delay_ms(350); // min = 300ms
 
         Ok(())
     }
@@ -180,8 +180,6 @@ where
         self.i2c
             .write_read(self.addr, &[0x03 + 6 * nth], &mut buf)?;
 
-        #[cfg(feature = "defmt")]
-        defmt::debug!("point regs", buf);
         let event = if let Some(event) = EventType::from_u8(buf[0] >> 6) {
             event
         } else {
