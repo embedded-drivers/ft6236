@@ -181,7 +181,7 @@ where
             .write_read(self.addr, &[0x03 + 6 * nth], &mut buf)?;
 
         #[cfg(feature = "defmt")]
-        defmt::info!("buf: {:?}", buf);
+        defmt::debug!("point regs", buf);
         let event = if let Some(event) = EventType::from_u8(buf[0] >> 6) {
             event
         } else {
