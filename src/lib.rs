@@ -1,6 +1,6 @@
 #![no_std]
 
-use embedded_hal_1::{delay::DelayUs, digital::OutputPin, i2c::I2c};
+use embedded_hal::{delay::DelayNs, digital::OutputPin, i2c::I2c};
 
 pub const DEFAULT_ADDR: u8 = 0x38;
 
@@ -136,7 +136,7 @@ where
         Ok(())
     }
 
-    pub fn reset<P: OutputPin, D: DelayUs>(
+    pub fn reset<P: OutputPin, D: DelayNs>(
         &mut self,
         rst: &mut P,
         delay: &mut D,
